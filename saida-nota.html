@@ -114,6 +114,17 @@
             }
         }
 
+        // Função para validar a quantidade de saída
+        function validarQuantidade(produtoCodigo, quantidade) {
+            const produto = produtos.find(p => p.codigo === produtoCodigo);
+            if (produto && produto.quantidade >= quantidade) {
+                return true;
+            } else {
+                alert(`Quantidade indisponível para o produto selecionado. Estoque atual: ${produto.quantidade}`);
+                return false;
+            }
+        }
+
         // Função para registrar a saída da nota
         document.getElementById('form-saida-nota').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -139,16 +150,16 @@
                 const endereco = item.querySelector('.endereco').value;
 
                 if (produtoCodigo && quantidade) {
+                    // Valida a quantidade de saída
+                    if (!validarQuantidade(produtoCodigo, quantidade)) {
+                        return;
+                    }
+
                     // Atualiza o estoque do produto
                     const produtoIndex = produtosAtualizados.findIndex(p => p.codigo === produtoCodigo);
                     if (produtoIndex !== -1) {
                         const produto = produtosAtualizados[produtoIndex];
-                        if (produto.quantidade >= quantidade) {
-                            produto.quantidade -= quantidade;
-                        } else {
-                            alert(`Quantidade indisponível para o produto ${produtoNome}.`);
-                            return;
-                        }
+                        produto.quantidade -= quantidade;
                     }
 
                     // Adiciona a saída
