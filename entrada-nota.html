@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrada de Nota</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Menu Lateral -->
+    <div class="menu-lateral">
+        <button class="btn btn-primary" onclick="toggleMenu()">☰</button>
+        <div id="menu-conteudo" class="menu-conteudo">
+            <a href="cadastro-empresa.html">Cadastrar Empresa</a>
+            <a href="cadastro-produto.html">Cadastrar Produto</a>
+            <a href="enderecamento.html">Endereçamento</a>
+            <a href="movimentacao.html">Movimentação</a>
+            <a href="conferencia.html">Conferência</a>
+            <a href="entrada-nota.html">Entrada de Nota</a>
+            <a href="saida-nota.html">Saída de Nota</a>
+            <a href="gerenciar-produtos.html">Gerenciar Produtos</a>
+            <a href="data-critica.html">Data Crítica</a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="container mt-5">
+        <h1>Entrada de Nota</h1>
+        <a href="estoque.html" class="btn btn-secondary mb-3">Voltar</a>
+        <form id="form-entrada-nota">
+            <div class="mb-3">
+                <label for="numero-nota" class="form-label">Número da Nota</label>
+                <input type="text" class="form-control" id="numero-nota" required>
+            </div>
+            <div class="mb-3">
+                <label for="empresa" class="form-label">Empresa</label>
+                <select class="form-control" id="empresa" required>
+                    <!-- Opções de empresas serão preenchidas via JavaScript -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="produto" class="form-label">Produto</label>
+                <select class="form-control" id="produto" required>
+                    <!-- Opções de produtos serão preenchidas via JavaScript -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="quantidade" class="form-label">Quantidade</label>
+                <input type="number" class="form-control" id="quantidade" required>
+            </div>
+            <div class="mb-3">
+                <label for="tipo-produto" class="form-label">Tipo</label>
+                <select class="form-control" id="tipo-produto" required>
+                    <option value="unidade">Unidade</option>
+                    <option value="kilo">Kilo</option>
+                    <option value="litro">Litro</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="endereco" class="form-label">Endereço (Vaga)</label>
+                <select class="form-control" id="endereco" required>
+                    <!-- Opções de vagas serão preenchidas via JavaScript -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="fabricacao" class="form-label">Data de Fabricação</label>
+                <input type="date" class="form-control" id="fabricacao" required>
+            </div>
+            <div class="mb-3">
+                <label for="validade" class="form-label">Data de Validade</label>
+                <input type="date" class="form-control" id="validade" required>
+           
+         </div>
+         // Função para adicionar um novo item à nota
+         function adicionarItem() {
+             const itensNota = document.getElementById('itens-nota');
+             const novoItem = document.createElement('div');
+             novoItem.classList.add('item-nota', 'mb-4');
+             novoItem.innerHTML = `
+                 <div class="mb-3">
+                     <label class="form-label">Empresa</label>
+                     <select class="form-control empresa" required>
+                         <option value="">Selecione uma empresa</option>
+                         ${empresas.map(empresa => `<option value="${empresa.codigo}">${empresa.nome}</option>`).join('')}
+                     </select>
+                 </div>
+                 <div class="mb-3">
+                     <label class="form-label">Produto</label>
+                     <select class="form-control produto" required>
+                         <option value="">Selecione um produto</option>
+                         ${produtos.map(produto => `<option value="${produto.nome}">${produto.nome}</option>`).join('')}
+                     </select>
+                 </div>
+                 <div class="mb-3">
+                     <label class="form-label">Quantidade</label>
+                     <input type="number" class="form-control quantidade" required>
+                 </div>
+                 <div class="mb-3">
+                     <label class="form-label">Tipo</label>
+                     <select class="form-control tipo-produto" required>
+                         <option value="unidade">Unidade</option>
+                         <option value="kilo">Kilo</option>
+                         <option value="litro">Litro</option>
+                     </select>
+                 </div>
+                 <div class="mb-3">
+                     <label class="form-label">Endereço (Vaga)</label>
+                     <select class="form-control endereco" required>
+                         ${letras.map(letra => {
+                             let options = '';
+                             for (let i = 1; i <= 20; i++) {
+                                 options += `<option value="${letra}${i}">${letra}${i}</option>`;
+                             }
+                             return options;
+                         }).join('')}
+                     </select>
+                 </div>
+                 <div class="mb-3">
+                     <label class="form-label">Data de Fabricação</label>
+                     <input type="date" class="form-control fabricacao" required>
+                 </div>
+                 <div class="mb-3">
+                     <label class="form-label">Data de Validade</label>
+                     <input type="date" class="form-control validade" required>
+                 </div>
+                 <button type="button" class="btn btn-danger btn-remover-item" onclick="removerItem(this)">Remover Item</button>
+             `;
+             itensNota.appendChild(novoItem);
+         }
+         
+         // Função para remover um item da nota
+         function removerItem(botao) {
+             const item = botao.closest('.item-nota');
+             item.remove();
+         }
+         
+         // Adiciona o evento de submit ao formulário de entrada de nota
+         document.getElementById('form-entrada-nota').addEventListener('submit', function (e) {
+             e.preventDefault();
+         
+             const numeroNota = document.getElementById('numero-nota').value;
+             const itensNota = document.querySelectorAll('.item-nota');
+             const entradas = JSON.parse(localStorage.getItem('entradas')) || [];
+             const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+         
+             // Verifica se há itens na nota
+             if (itensNota.length === 0) {
+                 alert('Adicione pelo menos um item à nota.');
+                 return;
+             }
+         
+             // Processa cada item da nota
+             itensNota.forEach(item => {
+                 const empresaCodigo = item.querySelector('.empresa').value;
+                 const produtoNome = item.querySelector('.produto').value;
+                 const quantidade = parseInt(item.querySelector('.quantidade').value);
+                 const tipo = item.querySelector('.tipo-produto').value;
+                 const endereco = item.querySelector('.endereco').value;
+                 const fabricacao = item.querySelector('.fabricacao').value;
+                 const validade = item.querySelector('.validade').value;
+         
+                 if (produtoNome && quantidade) {
+                     // Atualiza o estoque do produto
+                     const produtoIndex = produtos.findIndex(p => p.nome === produtoNome);
+                     if (produtoIndex !== -1) {
+                         produtos[produtoIndex].endereco = endereco;
+                         produtos[produtoIndex].quantidade = (produtos[produtoIndex].quantidade || 0) + parseInt(quantidade);
+                         produtos[produtoIndex].fabricacao = fabricacao;
+                         produtos[produtoIndex].validade = validade;
+                         localStorage.setItem('produtos', JSON.stringify(produtos));
+                     }
+         
+                     // Adiciona a entrada
+                     entradas.push({
+                         numeroNota,
+                         empresaCodigo,
+                         produto: produtoNome,
+                         quantidade,
+                         tipo,
+                         endereco,
+                         fabricacao,
+                         validade,
+                         data: new Date().toLocaleString()
+                     });
+                 }
+             });
+         
+             // Salva as entradas no localStorage
+             localStorage.setItem('entradas', JSON.stringify(entradas));
+         
+             alert('Entrada de nota registrada com sucesso!');
+             window.location.href = 'estoque.html'; // Redireciona para a página de estoque
+         });
+         
+         // Adiciona o botão para adicionar itens
+         document.getElementById('adicionar-item').addEventListener('click', adicionarItem);
+         <button type="submit" class="btn btn-primary w-100">Registrar Entrada</button>
+        </form>
+        <p class="text-success mt-3" id="entrada-message"></p>
+    </div>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Preenche as opções de empresas
+        const empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+        const selectEmpresas = document.getElementById('empresa');
+        empresas.forEach(empresa => {
+            const option = document.createElement('option');
+            option.value = empresa.codigo;
+            option.textContent = empresa.nome;
+            selectEmpresas.appendChild(option);
+        });
+
+        // Preenche as opções de produtos
+        const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+        const selectProdutos = document.getElementById('produto');
+        produtos.forEach(produto => {
+            const option = document.createElement('option');
+            option.value = produto.nome;
+            option.textContent = produto.nome;
+            selectProdutos.appendChild(option);
+        });
+
+        // Preenche as opções de vagas
+        const selectEndereco = document.getElementById('endereco');
+        const letras = ['A', 'B', 'C', 'D'];
+        letras.forEach(letra => {
+            for (let i = 1; i <= 20; i++) {
+                const vaga = `${letra}${i}`;
+                const option = document.createElement('option');
+                option.value = vaga;
+                option.textContent = vaga;
+                selectEndereco.appendChild(option);
+            }
+        });
+
+        // Registra a entrada de nota
+        document.getElementById('form-entrada-nota').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const numeroNota = document.getElementById('numero-nota').value;
+            const empresaCodigo = document.getElementById('empresa').value;
+            const produto = document.getElementById('produto').value;
+            const quantidade = document.getElementById('quantidade').value;
+            const tipo = document.getElementById('tipo-produto').value;
+            const endereco = document.getElementById('endereco').value;
+            const fabricacao = document.getElementById('fabricacao').value;
+            const validade = document.getElementById('validade').value;
+
+            // Recupera produtos do localStorage
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+
+            // Encontra o produto selecionado
+            const produtoIndex = produtos.findIndex(p => p.nome === produto);
+            if (produtoIndex !== -1) {
+                produtos[produtoIndex].endereco = endereco;
+                produtos[produtoIndex].quantidade = (produtos[produtoIndex].quantidade || 0) + parseInt(quantidade);
+                produtos[produtoIndex].fabricacao = fabricacao; // Adiciona a data de fabricação
+                produtos[produtoIndex].validade = validade; // Adiciona a data de validade
+                localStorage.setItem('produtos', JSON.stringify(produtos));
+            }
+
+            // Recupera entradas do localStorage
+            const entradas = JSON.parse(localStorage.getItem('entradas')) || [];
+
+            // Adiciona a nova entrada
+            entradas.push({ numeroNota, empresaCodigo, produto, quantidade, tipo, endereco, fabricacao, validade, data: new Date().toLocaleString() });
+            localStorage.setItem('entradas', JSON.stringify(entradas));
+
+            // Exibe mensagem de sucesso
+            document.getElementById('entrada-message').textContent = 'Entrada registrada com sucesso!';
+            document.getElementById('entrada-message').classList.remove('text-danger');
+            document.getElementById('entrada-message').classList.add('text-success');
+
+            // Limpa o formulário
+            document.getElementById('form-entrada-nota').reset();
+        });
+    </script>
+</body>
+</html>

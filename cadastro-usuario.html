@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Cadastro de Usuário</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="form-cadastro-usuario">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nome de Usuário</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="nome" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="telefone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="senha" class="form-label">Senha</label>
+                                <input type="password" class="form-control" id="senha" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+                        </form>
+                        <p class="text-success mt-3" id="cadastro-message"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('form-cadastro-usuario').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const nome = document.getElementById('nome').value;
+            const telefone = document.getElementById('telefone').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            // Recupera usuários do localStorage
+            const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+            // Verifica se o usuário já existe
+            const usuarioExistente = usuarios.find(u => u.username === username);
+            if (usuarioExistente) {
+                document.getElementById('cadastro-message').textContent = 'Usuário já existe!';
+                document.getElementById('cadastro-message').classList.remove('text-success');
+                document.getElementById('cadastro-message').classList.add('text-danger');
+            } else {
+                // Adiciona o novo usuário
+                usuarios.push({ username, nome, telefone, email, senha });
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+                // Exibe mensagem de sucesso
+                document.getElementById('cadastro-message').textContent = 'Cadastro realizado com sucesso! Redirecionando...';
+                document.getElementById('cadastro-message').classList.remove('text-danger');
+                document.getElementById('cadastro-message').classList.add('text-success');
+
+                // Redireciona para a tela de login após 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

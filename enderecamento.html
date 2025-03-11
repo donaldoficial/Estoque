@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endereçamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Menu Lateral -->
+    <div class="menu-lateral">
+        <button class="btn btn-primary" onclick="toggleMenu()">☰</button>
+        <div id="menu-conteudo" class="menu-conteudo">
+            <a href="cadastro-empresa.html">Cadastrar Empresa</a>
+            <a href="cadastro-produto.html">Cadastrar Produto</a>
+            <a href="enderecamento.html">Endereçamento</a>
+            <a href="movimentacao.html">Movimentação</a>
+            <a href="conferencia.html">Conferência</a>
+            <a href="entrada-nota.html">Entrada de Nota</a>
+            <a href="saida-nota.html">Saída de Nota</a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="container mt-5">
+        <h1>Endereçamento</h1>
+        <a href="estoque.html" class="btn btn-secondary mb-3">Voltar</a>
+        <div class="row">
+            <div class="col">
+                <h3>Vagas Disponíveis</h3>
+                <div id="vagas-disponiveis" class="row"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Função para gerar as vagas de A1 até D20
+        function gerarVagas() {
+            const vagasContainer = document.getElementById('vagas-disponiveis');
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            const empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+
+            const letras = ['A', 'B', 'C', 'D'];
+            letras.forEach(letra => {
+                for (let i = 1; i <= 20; i++) {
+                    const vaga = `${letra}${i}`;
+                    const produtosNaVaga = produtos.filter(p => p.endereco === vaga);
+
+                    const vagaDiv = document.createElement('div');
+                    vagaDiv.className = 'col-md-3 mb-3';
+                    vagaDiv.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Vaga ${vaga}</h5>
+                                <p class="card-text">
+                                    ${produtosNaVaga.length > 0 ?
+                                        produtosNaVaga.map(produto => {
+                                            const empresa = empresas.find(e => e.codigo === produto.empresaCodigo);
+                                            return `
+                                                Produto: ${produto.nome}<br>
+                                                Quantidade: ${produto.quantidade}<br>
+                                                Empresa: ${empresa ? empresa.nome : 'N/A'}<br><br>
+                                            `;
+                                        }).join('')
+                                        : 'Vaga disponível'
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                    vagasContainer.appendChild(vagaDiv);
+                }
+            });
+        }
+
+        // Carrega as vagas ao abrir a página
+        gerarVagas();
+
+        // Função para alternar o menu lateral
+        function toggleMenu() {
+            const menu = document.getElementById('menu-conteudo');
+            menu.classList.toggle('menu-aberto');
+        }
+    </script>
+</body>
+</html>
